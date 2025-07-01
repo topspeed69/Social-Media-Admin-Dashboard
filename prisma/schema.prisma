@@ -1,0 +1,237 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int       @id @default(autoincrement()) @map("user_id")
+  username       String    @unique
+  email          String    // Remove unique constraint temporarily
+  profilePhotoUrl String?  @map("profile_photo_url") @default("https://picsum.photos/100")
+  bio            String?
+  status         String?   @default("active")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  
+  // User content
+  posts           Post[]
+  comments        Comment[]
+  
+  // Interactions
+  postLikes       PostLike[]
+  commentLikes    CommentLike[]
+  bookmarks       Bookmark[]
+  
+  // Follows
+  followers       Follow[]      @relation("follower")
+  following       Follow[]      @relation("following")
+  
+  // Hashtags
+  hashtagFollows  HashtagFollow[]
+  
+  // Moderation
+  moderator       Moderator?
+  reportedFlags   PostFlag[]    @relation("reporter")
+  resolvedFlags   PostFlag[]    @relation("resolver")
+  
+  // Login history
+  logins          Login[]
+
+  @@map("users")
+}
+
+model Photo {
+  id        Int      @id @default(autoincrement()) @map("photo_id")
+  photoUrl  String   @unique @map("photo_url")
+  postId    Int      @unique @map("post_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  size      Float
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@map("photos")
+}
+
+model Video {
+  id        Int      @id @default(autoincrement()) @map("video_id")
+  videoUrl  String   @unique @map("video_url")
+  postId    Int      @unique @map("post_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  size      Float
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@map("videos")
+}
+
+model Post {
+  id        Int        @id @default(autoincrement()) @map("post_id")
+  photoId   Int?       @map("photo_id")
+  videoId   Int?       @map("video_id")
+  userId    Int        @map("user_id")
+  caption   String?
+  location  String?
+  createdAt DateTime   @default(now()) @map("created_at")
+
+  // Relations
+  user      User       @relation(fields: [userId], references: [id])
+  photo     Photo?
+  video     Video?
+  comments  Comment[]
+  likes     PostLike[]
+  tags      PostTag[]
+  bookmarks Bookmark[]
+  flags     PostFlag[]
+
+  @@map("post")
+}
+
+
+model Comment {
+  id          Int           @id @default(autoincrement()) @map("comment_id")
+  text        String        @map("comment_text")
+  postId      Int          @map("post_id")
+  userId      Int          @map("user_id")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  
+  // Relations
+  post        Post         @relation(fields: [postId], references: [id])
+  user        User         @relation(fields: [userId], references: [id])
+  likes       CommentLike[]
+
+  @@map("comments")
+}
+
+model PostLike {
+  userId    Int      @map("user_id")
+  postId    Int      @map("post_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  user      User     @relation(fields: [userId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
+
+  @@id([userId, postId])
+  @@map("post_likes")
+}
+
+model CommentLike {
+  userId     Int      @map("user_id")
+  commentId  Int      @map("comment_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  user       User     @relation(fields: [userId], references: [id])
+  comment    Comment  @relation(fields: [commentId], references: [id])
+
+  @@id([userId, commentId])
+  @@map("comment_likes")
+}
+
+model Follow {
+  followerId  Int      @map("follower_id")
+  followeeId  Int      @map("followee_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  follower    User     @relation("follower", fields: [followerId], references: [id])
+  followee    User     @relation("following", fields: [followeeId], references: [id])
+
+  @@id([followerId, followeeId])
+  @@map("follows")
+}
+
+model Hashtag {
+  id         Int            @id @default(autoincrement()) @map("hashtag_id")
+  name       String         @unique @map("hashtag_name")
+  createdAt  DateTime       @default(now()) @map("created_at")
+  
+  // Relations
+  followers  HashtagFollow[]
+  posts      PostTag[]
+
+  @@map("hashtags")
+}
+
+model HashtagFollow {
+  userId    Int      @map("user_id")
+  hashtagId Int      @map("hashtag_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  user      User     @relation(fields: [userId], references: [id])
+  hashtag   Hashtag  @relation(fields: [hashtagId], references: [id])
+
+  @@id([userId, hashtagId])
+  @@map("hashtag_follow")
+}
+
+model PostTag {
+  postId    Int     @map("post_id")
+  hashtagId Int     @map("hashtag_id")
+  
+  // Relations
+  post      Post    @relation(fields: [postId], references: [id])
+  hashtag   Hashtag @relation(fields: [hashtagId], references: [id])
+
+  @@id([postId, hashtagId])
+  @@map("post_tags")
+}
+
+model Bookmark {
+  postId    Int      @map("post_id")
+  userId    Int      @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  post      Post     @relation(fields: [postId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@id([userId, postId])
+  @@map("bookmarks")
+}
+
+model Login {
+  id        Int      @id @default(autoincrement()) @map("login_id")
+  userId    Int      @map("user_id")
+  ip        String
+  loginTime DateTime @default(now()) @map("login_time")
+  
+  // Relations
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("login")
+}
+
+// New models for admin dashboard
+model Moderator {
+  id          Int      @id @default(autoincrement()) @map("moderator_id")
+  userId      Int      @unique @map("user_id") // One-to-one with User
+  role        String   @default("moderator")   // 'admin' or 'moderator'
+  permissions Json     // Array of permission strings
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@map("moderators")
+}
+
+model PostFlag {
+  id         Int       @id @default(autoincrement()) @map("flag_id")
+  postId     Int       @map("post_id")
+  reportedBy Int       @map("reported_by")
+  reason     String
+  status     String    @default("pending") // 'pending', 'resolved', 'dismissed'
+  createdAt  DateTime  @default(now()) @map("created_at")
+  resolvedAt DateTime? @map("resolved_at")
+  resolvedBy Int?      @map("resolved_by")
+  
+  // Relations
+  post       Post      @relation(fields: [postId], references: [id])
+  reporter   User      @relation("reporter", fields: [reportedBy], references: [id])
+  resolver   User?     @relation("resolver", fields: [resolvedBy], references: [id])
+
+  @@map("post_flags")
+}

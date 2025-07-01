@@ -1,14 +1,15 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { 
-  Activity, 
-  Users, 
-  TrendingUp, 
-  Shield, 
-  ScrollText, 
-  LogOut 
+import { useState, useEffect } from 'react'
+import { useRouter, usePathname } from 'next/navigation'
+import {
+  Activity,
+  Users,
+  TrendingUp,
+  Shield,
+  ScrollText,
+  FileText,
+  LogOut
 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import {
@@ -29,10 +30,10 @@ interface SidebarLinkProps {
 
 const SidebarLink = ({ icon: Icon, label, href, active }: SidebarLinkProps) => {
   const router = useRouter()
-  
+ 
   return (
-    <Button 
-      variant="ghost" 
+    <Button
+      variant="ghost"
       className={`w-full justify-start transition-all duration-200 hover:bg-black hover:text-white
         ${active ? 'bg-black text-white' : ''}`}
       onClick={() => router.push(href)}
@@ -46,7 +47,45 @@ const SidebarLink = ({ icon: Icon, label, href, active }: SidebarLinkProps) => {
 export function Sidebar() {
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
   const router = useRouter()
-  const pathname = location.pathname
+  const pathname = usePathname()
+
+  const routes = [
+    {
+      icon: Activity,
+      label: "Overview",
+      href: "/dashboard"
+    },
+    {
+      icon: Users,
+      label: "Users",
+      href: "/dashboard/users"
+    },
+    {
+      icon: FileText,
+      label: "Posts",
+      href: "/dashboard/posts"
+    },
+    {
+      icon: Shield,
+      label: "Moderation",
+      href: "/dashboard/moderation"
+    },
+    {
+      icon: ScrollText,
+      label: "Logs",
+      href: "/dashboard/logs"
+    },
+    {
+      icon: TrendingUp,
+      label: "Moderators",
+      href: "/dashboard/moderators"
+    },
+    {
+      icon: Activity,
+      label: "DB Status",
+      href: "/dashboard/db-status"
+    }
+  ]
 
   const handleLogout = () => {
     // Add your logout logic here
@@ -55,40 +94,25 @@ export function Sidebar() {
   }
 
   return (
-    <div className="w-64 border-r bg-card shadow-lg">
+    <div className="w-64 border-r bg-card shadow-lg h-screen">
       <div className="p-4 border-b">
         <h1 className="text-xl font-semibold">Admin Dashboard</h1>
       </div>
-      
+     
       <nav className="p-2 space-y-1">
-        <SidebarLink 
-          icon={Activity} 
-          label="Overview" 
-          href="/dashboard"
-          active={pathname === '/dashboard'}
-        />
-        <SidebarLink 
-          icon={Users} 
-          label="Users" 
-          href="/dashboard/users"
-          active={pathname === '/dashboard/users'}
-        />
-        <SidebarLink 
-          icon={Shield} 
-          label="Moderation" 
-          href="/dashboard/moderation"
-          active={pathname === '/dashboard/moderation'}
-        />
-        <SidebarLink 
-          icon={ScrollText} 
-          label="Logs" 
-          href="/dashboard/logs"
-          active={pathname === '/dashboard/logs'}
-        />
-        
+        {routes.map((route) => (
+          <SidebarLink
+            key={route.href}
+            icon={route.icon}
+            label={route.label}
+            href={route.href}
+            active={pathname === route.href}
+          />
+        ))}
+       
         <div className="pt-4">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             className="w-full justify-start text-red-500 hover:text-red-500 hover:bg-red-500/10"
             onClick={() => setShowLogoutDialog(true)}
           >

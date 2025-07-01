@@ -1,7 +1,9 @@
-import type { NextConfig } from "next";
+import { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  experimental: {
+    // appDir: true, // Uncomment if your Next.js version supports it
+  },
 };
 
 export default nextConfig;
