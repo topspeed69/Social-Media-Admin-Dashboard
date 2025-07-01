@@ -46,6 +46,7 @@ A modern Next.js 14 + Prisma + MySQL admin dashboard for content moderation, ana
 - `public/` — Static assets
 - `scripts/` — DB and debug scripts
 - `types/` — Shared TypeScript types
+- `db_creation/` — SQL schema and dummy data for testing (see credits below)
 
 ## Deployment
 - Vercel, Docker, or any Node.js hosting
@@ -53,6 +54,9 @@ A modern Next.js 14 + Prisma + MySQL admin dashboard for content moderation, ana
 
 ## Contributing
 PRs and issues welcome!
+
+## Credits
+- Database schema and dummy data in `db_creation/` are inspired by and partially sourced from [ssahibsingh/Social-Media-Database-Project](https://github.com/ssahibsingh/Social-Media-Database-Project). Please visit and star their repo!
 
 ## License
 MIT

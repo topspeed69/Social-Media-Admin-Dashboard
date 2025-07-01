@@ -102,7 +102,9 @@ export default function DbStatusPage() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-col items-center">
-                <span className="text-green-600 font-bold">Receiving: {db.networkIn ?? '-'} B/s</span>
+                <span className="text-green-600 font-bold">
+                  Receiving: {db.networkIn != null ? (db.networkIn / 1024).toFixed(2) : '-'} KB/s
+                </span>
                 <span className="text-orange-600 font-bold mt-1">Sending: {db.networkOut ?? '-'} B/s</span>
               </div>
             </CardContent>
