@@ -4,7 +4,6 @@ import { PrismaClient } from '@prisma/client'
 // Use a raw query to get MySQL server metrics
 export async function getMysqlMetrics() {
   // These queries use MySQL's SHOW STATUS and SHOW VARIABLES
-  // For more advanced metrics, you can use performance_schema tables
   const client = prisma as PrismaClient & { $queryRaw: any }
   const [statusRows, variableRows, processRows] = await Promise.all([
     client.$queryRaw`SHOW GLOBAL STATUS`,

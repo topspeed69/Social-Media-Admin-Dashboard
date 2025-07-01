@@ -1,3 +1,34 @@
-node_modules
-.next
-.env
+# Node
+node_modules/
+.next/
+.env*
+.env.*
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
+prisma/migrations/*/README.md
+
+# VSCode
+.vscode/
+
+# Logs
+logs/
+*.log
+
+# Build output
+out/
+
+# OS
+Thumbs.db
+*.swp
+
+# Misc
+coverage/
+dist/
+.idea/
+*.local

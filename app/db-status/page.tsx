@@ -59,7 +59,9 @@ export default function DbStatusPage() {
                   })}
                 />
               </div>
-              <div className="text-xs text-center mt-2">Efficiency</div>
+              <div className="text-xs text-muted-foreground text-center mt-2">
+                Efficiency of table cache usage
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -118,7 +120,7 @@ export default function DbStatusPage() {
           </Card>
         </div>
       ) : (
-        <div className="text-red-600">Failed to load DB status</div>
+        <div className="text-red-500">Database unavailable or error fetching status.</div>
       )}
     </div>
   );
