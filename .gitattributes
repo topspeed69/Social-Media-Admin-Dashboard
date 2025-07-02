@@ -1,0 +1,13 @@
+*.ts linguist-language=TypeScript
+*.tsx linguist-language=TypeScript
+*.sql linguist-language=SQL
+*.json linguist-language=JSON
+*.lock linguist-generated
+*.log linguist-generated
+dist/* linguist-generated
+build/* linguist-generated
+.next/* linguist-generated
+out/* linguist-generated
+node_modules/* linguist-vendored
+prisma/migrations/* linguist-generated
+prisma/generated/* linguist-generated
